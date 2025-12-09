@@ -1,338 +1,312 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>30天找到男朋友計畫</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        /* 卡片翻轉動畫 */
-        .card {
-            transform-style: preserve-3d;
-            transition: transform 0.8s;
-        }
-        .card.is-flipped {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        .card-back {
-            transform: rotateY(180deg);
-        }
-        .progress-dot {
-            transition: all 0.3s ease;
-        }
-        /* 螢光效果 */
-        .glow-shadow {
-            box-shadow: 0 0 8px rgba(251, 191, 36, 0.6), 0 0 20px rgba(168, 85, 247, 0.5);
-        }
-        .text-glow {
-            text-shadow: 0 0 5px rgba(251, 191, 36, 0.7);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>洞察力引擎 | 每日新聞情報</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      font-family: 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.14), transparent 32%),
+                  radial-gradient(circle at 80% 0%, rgba(167,139,250,0.15), transparent 32%),
+                  #0b1225;
+      min-height: 100vh;
+      color: #e5e7eb;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 1024px) {
+      .card-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+    }
+    .badge {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.06);
+      padding: 0.3rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+    }
+    .pill {
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.35);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      color: #93c5fd;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #c4d4ff;
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
-
-    <div id="app" class="w-full max-w-md mx-auto">
-        <header class="text-center mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-amber-300 text-glow">30天找到男朋友計畫</h1>
-            <p class="text-purple-300 mt-2">一場為期30天的戀愛叛逆實驗</p>
-        </header>
-
-        <main>
-            <!-- 卡片區域 -->
-            <div id="card-container" class="perspective-1000 w-full h-80 md:h-96 mb-6">
-                <div id="card" class="card relative w-full h-full cursor-pointer">
-                    <!-- 卡片正面 -->
-                    <div id="card-front" class="card-face absolute w-full h-full flex flex-col items-center justify-center bg-purple-900 border-2 border-purple-500 rounded-2xl glow-shadow p-4">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-amber-300 opacity-80"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"></path><path d="M12 12.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"></path><path d="M12 22v-6"></path></svg>
-                        <h2 class="text-2xl font-bold mt-4 text-amber-300">今日神諭</h2>
-                        <p id="draw-prompt" class="mt-2 text-purple-200">點擊抽取今天的任務</p>
-                    </div>
-                    <!-- 卡片背面 (任務內容) -->
-                    <div id="card-back" class="card-face card-back absolute w-full h-full bg-gray-800 border-2 border-amber-400 rounded-2xl p-6 flex flex-col justify-between overflow-y-auto">
-                        <div>
-                            <p id="task-day" class="font-bold text-amber-300">Day X</p>
-                            <h3 id="task-title" class="text-2xl font-bold text-purple-300 mt-2 mb-4">任務標題</h3>
-                            <p id="task-description" class="text-gray-300 text-base leading-relaxed">任務描述將會出現在這裡...</p>
-                        </div>
-                        <div id="action-buttons" class="mt-4 flex flex-col space-y-3">
-                            <!-- 按鈕會動態生成 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 進度追蹤 -->
-            <div id="progress-tracker" class="bg-gray-800/50 p-4 rounded-xl">
-                <h3 class="text-center font-bold text-lg mb-4 text-purple-300">冒險日誌</h3>
-                <div id="progress-grid" class="grid grid-cols-6 gap-3">
-                    <!-- 進度點會由JS生成 -->
-                </div>
-            </div>
-        </main>
-        
-        <!-- 分享 Modal -->
-        <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden z-50">
-            <div class="bg-gray-800 rounded-2xl p-6 w-full max-w-sm text-center border-2 border-purple-500 glow-shadow">
-                <h2 class="text-2xl font-bold text-amber-300 mb-4">分享你的挑戰！</h2>
-                <p class="text-purple-200 mb-6">截圖分享到你的社群媒體，邀請朋友一起加入這場冒險！ #30天男友GET計畫</p>
-                <div id="share-card" class="bg-purple-900 rounded-lg p-4 mb-6 text-left">
-                    <p class="font-bold text-amber-300">Day <span id="share-day"></span> - 已完成 ✅</p>
-                    <p class="mt-2 text-white">我剛剛完成了「30天找到男朋友計畫」的今日挑戰！這是一場超酷的自我成長實驗，你也該試試！</p>
-                </div>
-                <button id="close-share-modal" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">關閉</button>
-            </div>
-        </div>
-        
-        <!-- 恭喜完成 Modal -->
-        <div id="congrats-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden z-50">
-            <div class="bg-gray-800 rounded-2xl p-8 w-full max-w-sm text-center border-2 border-amber-400 glow-shadow">
-                <h2 class="text-3xl font-bold text-amber-300 text-glow mb-4">恭喜！</h2>
-                <p class="text-purple-200 text-lg mb-6">你已完成所有30天的挑戰，成為了真正的「人生玩家」！無論是否找到對象，現在的你，就是最好的禮物。
-                </p>
-                <button id="restart-plan" class="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-colors">重新開始一場冒險</button>
-            </div>
-        </div>
+<body class="px-4 py-6 lg:px-10">
+  <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-bold text-white">IE</div>
+      <div>
+        <p class="text-sm text-slate-300">洞察力引擎 | Intelligence Briefing</p>
+        <h1 class="text-2xl font-bold text-white">每日新聞情報</h1>
+      </div>
     </div>
+    <div class="flex items-center gap-2 text-sm text-slate-300">
+      <span class="badge" id="tz-badge">Asia/Taipei</span>
+      <span class="pill" id="date-badge">--</span>
+      <span class="badge" id="time-badge">--</span>
+    </div>
+  </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- 資料定義 ---
-            const TASKS = [
-                { day: 1, title: '慣例的葬禮', description: '寫一封「分手信」給你最想戒掉的一個壞習慣（例如：拖延症、愛說「隨便」）。大聲朗讀，然後把信燒掉或撕碎。今天，你自由了。' },
-                { day: 2, title: '城市探險家', description: '搭上一班你從未坐過的公車或捷運，任選一站下車。在那個陌生的區域漫步30分鐘，拍下三張讓你覺得有趣的照片。' },
-                { day: 3, title: '無用之用的讚歌', description: '花30分鐘學習一個「完全沒用但很酷」的技能。例如：用手發出鳥叫聲、轉筆、單手打雞蛋。然後找機會在朋友面前不經意地展示一下。' },
-                { day: 4, title: '讚美的藝術', description: '今天對三位陌生人給出真誠、具體的讚美。不能是「你很漂亮」，必須是「你的耳環顏色和你的眼妝很搭」或「你對店員說謝謝的樣子很有禮貌」。' },
-                { day: 5, title: '陌生人的善意', description: '去一家咖啡館，隨機買一本書。在書的某一頁，留下一張讚美的話或一個有趣的問題給下一個讀到它的人。' },
-                { day: 6, title: '反向搭訕', description: '向一位你覺得有型的異性「請教」一個問題。禁止問路。可以是：「不好意思，我看你耳機很有型，最近有推薦的樂團嗎？」' },
-                { day: 7, title: '獨處的儀式感', description: '一個人去完成一件通常會兩個人做的事。例如：一個人去看愛情電影、一個人去吃一頓需要預約的晚餐。全程手機靜音，專心體會一個人的美好。' },
-                { day: 8, title: '意見領袖', description: '在你最常去的餐廳或店家，給老闆或店員一個具體的、有建設性的建議。無論對方是否採納，你的敢於發聲就已值得嘉獎。' },
-                { day: 9, title: '「我」的使用說明書', description: '寫一份關於你自己的「使用說明書」。包含：「產品規格」（你的優缺點）、「注意事項」（你的地雷）、「保養方式」（什麼事會讓你開心）。' },
-                { day: 10, title: '主動的策劃者', description: '當一次「局長」。組織一個至少有4人參加的線下活動，主題要夠怪。例如：「懷舊零食試吃會」或「最醜毛衣派對」。' },
-                { day: 11, title: '感謝清單', description: '列出10件你真心感謝但從未說出口的小事。可以是對某個人，也可以是對某個物品或某段經歷。' },
-                { day: 12, title: '五感日記', description: '找個地方靜坐10分鐘，寫下你當下感受到的：五種你看見的東西、四種你觸碰到的東西、三種你聽見的聲音、兩種你聞到的氣味、一種你能嚐到的味道。' },
-                { day: 13, title: '形象叛逆日', description: '嘗試一種你從未試過的穿搭風格或化妝方式。重點不是好不好看，而是「敢不敢」。自信地穿著它出門至少一小時。' },
-                { day: 14, title: '人脈煉金術', description: '把你認為絕不可能有交集的兩位朋友介紹給對方認識，並說明你覺得他們會合得來的原因。你正在成為一個網路的節點，而不是終點。' },
-                { day: 15, title: '拒絕的練習', description: '今天，對一件你不想做的小事或請求，溫和但堅定地說「不」。不需要任何解釋。' },
-                { day: 16, title: '好奇心驅動', description: '在網路上搜尋一個你一直很好奇但從未深入了解的問題的答案。例如：「為什麼天空是藍色的？」或「黑洞裡面是什麼？」' },
-                { day: 17, title: '第一排的勇氣', description: '無論是上課、開會還是看表演，選擇坐在第一排。感受一下身處中心的感覺。' },
-                { day: 18, title: '數位排毒', description: '睡前一小時和起床後一小時，完全不碰手機或任何電子螢幕。用這段時間看書、冥想、或只是發呆。' },
-                { day: 19, title: '製造驚喜', description: '為一位朋友或家人準備一個小小的、意想不到的驚喜。可以是一杯他喜歡的飲料，或是一張手寫的鼓勵卡片。' },
-                { day: 20, title: '失敗的慶祝', description: '回想一件最近的「失敗」，為它找出三個正面的意義或學到的教訓。然後為這個「有價值的失敗」乾杯。' },
-                { day: 21, title: '身體的聲音', description: '嘗試一種新的運動或身體活動，可以是瑜珈、攀岩、跳舞或只是在家跟著影片做伸展。專注於身體的感受。' },
-                { day: 22, title: '重溫舊夢', description: '找出你小時候的一張照片，回想當時的夢想是什麼。為那個夢想，做一件微小但相關的事情。' },
-                { day: 23, title: '路線變更', description: '用一條完全不同的路線去上班、上學或回家。觀察沿途有什麼不一樣的風景和店家。' },
-                { day: 24, title: '請求幫助', description: '向某人請求一個小小的幫助，即使這件事你自己也能完成。學會接受他人的善意也是一種能力。' },
-                { day: 25, title: '財務審視', description: '檢視你最近的一筆「非必要」支出，思考它為你帶來的是短暫的快樂還是長期的價值。' },
-                { day: 26, title: '單一任務挑戰', description: '選擇一項工作或任務，設定30分鐘的計時器，在此期間只做這一件事，不分心、不看手機。' },
-                { day: 27, title: '給未來的自己', description: '給一年後的自己寫一封信，談談你現在的期望、擔憂和夢想。把它封存好，設定一個一年後的提醒去打開它。' },
-                { day: 28, title: '道歉的勇氣', description: '回想一件你可能無意中傷害到別人的小事，真誠地向對方道歉。無論對方反應如何，重要的是你的誠實。' },
-                { day: 29, title: '創造的喜悅', description: '用雙手創造一樣東西。可以是一頓飯、一幅畫、一首短詩或是一段影片。重點是過程，不是結果。' },
-                { day: 30, title: '畢業舞會', description: '為這30天的旅程畫上句點。穿上你最喜歡的衣服，去一個你最喜歡的地方，給自己寫一封信，總結這段時間的成長。至於男朋友？他可能在路上，也可能你已發現，最好的伴侶，就是現在的自己。' },
-            ];
-            
-            // --- 狀態管理 ---
-            let state = {
-                currentDay: 1,
-                lastDrawDate: null,
-                tasksStatus: Array(30).fill('pending'), // 'pending', 'completed', 'skipped'
-                isCardFlipped: false,
-            };
+  <main class="card-grid">
+    <section class="space-y-4">
+      <div class="glass rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-amber-400">📌</span>
+            <h2 class="section-title">今日核心摘要</h2>
+          </div>
+          <span class="text-xs text-slate-400" id="cutoff-note">資料更新中...</span>
+        </div>
+        <div class="space-y-3" id="summary-list"></div>
+      </div>
 
-            // --- DOM 元素 ---
-            const card = document.getElementById('card');
-            const cardContainer = document.getElementById('card-container');
-            const drawPrompt = document.getElementById('draw-prompt');
-            const taskDayEl = document.getElementById('task-day');
-            const taskTitleEl = document.getElementById('task-title');
-            const taskDescEl = document.getElementById('task-description');
-            const actionButtonsEl = document.getElementById('action-buttons');
-            const progressGrid = document.getElementById('progress-grid');
-            
-            const shareModal = document.getElementById('share-modal');
-            const closeShareModalBtn = document.getElementById('close-share-modal');
-            const shareDayEl = document.getElementById('share-day');
+      <div class="glass rounded-2xl p-5">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-cyan-300">🔥</span>
+          <h2 class="section-title">熱搜與政策追蹤</h2>
+          <span class="badge">Daily Focus</span>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3" id="hot-topics"></div>
+      </div>
 
-            const congratsModal = document.getElementById('congrats-modal');
-            const restartPlanBtn = document.getElementById('restart-plan');
+      <div class="glass rounded-2xl p-5 space-y-5">
+        <div class="flex items-center gap-2">
+          <span class="text-rose-300">🌐</span>
+          <h2 class="section-title">全球媒體與社群熱搜</h2>
+        </div>
+        <div id="social-tags" class="flex flex-wrap gap-2"></div>
+        <div class="grid md:grid-cols-2 gap-3" id="social-cards"></div>
+      </div>
+    </section>
 
-            // --- 函式 ---
+    <section class="space-y-4">
+      <div class="glass rounded-2xl p-5">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-indigo-300">🛰️</span>
+          <h2 class="section-title">全球社群熱點（Daily Focus）</h2>
+        </div>
+        <div class="aspect-video rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center text-slate-400 text-sm">
+          依設計插圖區（可替換為動態圖表）
+        </div>
+      </div>
 
-            // 儲存進度到 localStorage
-            function saveState() {
-                localStorage.setItem('boyfriendPlanState', JSON.stringify(state));
-            }
+      <div class="glass rounded-2xl p-5 space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="text-emerald-300">🧭</span>
+          <h2 class="section-title">模組化情報</h2>
+        </div>
+        <div class="space-y-4" id="modules"></div>
+      </div>
 
-            // 載入進度
-            function loadState() {
-                const savedState = localStorage.getItem('boyfriendPlanState');
-                if (savedState) {
-                    state = JSON.parse(savedState);
-                }
-            }
-            
-            // 渲染進度網格
-            function renderProgress() {
-                progressGrid.innerHTML = '';
-                state.tasksStatus.forEach((status, index) => {
-                    const day = index + 1;
-                    const dot = document.createElement('div');
-                    dot.classList.add('progress-dot', 'w-10', 'h-10', 'md:w-12', 'md:h-12', 'rounded-full', 'flex', 'items-center', 'justify-center', 'font-bold', 'text-sm');
-                    dot.textContent = day;
-                    
-                    if (status === 'completed') {
-                        dot.classList.add('bg-amber-400', 'text-gray-900', 'shadow-lg');
-                    } else if (day < state.currentDay) {
-                         dot.classList.add('bg-gray-600', 'text-gray-400'); // 已過期但未完成
-                    } else if (day === state.currentDay) {
-                        dot.classList.add('bg-purple-500', 'ring-2', 'ring-amber-300');
-                    }
-                    else {
-                        dot.classList.add('bg-gray-700', 'text-gray-500');
-                    }
-                    progressGrid.appendChild(dot);
-                });
-            }
+      <div class="glass rounded-2xl p-5 space-y-4">
+        <div class="flex items-center gap-2">
+          <span class="text-amber-300">📅</span>
+          <h2 class="section-title">經濟數據日曆（1-2週）</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm text-left">
+            <thead class="text-slate-300">
+              <tr class="border-b border-slate-700">
+                <th class="py-2 pr-4">日期（台北）</th>
+                <th class="py-2 pr-4">事件</th>
+                <th class="py-2 pr-4">可能影響</th>
+                <th class="py-2 pr-4">來源</th>
+              </tr>
+            </thead>
+            <tbody id="calendar" class="text-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
 
-            // 更新卡片內容
-            function updateCardContent(dayIndex) {
-                const task = TASKS[dayIndex];
-                taskDayEl.textContent = `Day ${task.day}`;
-                taskTitleEl.textContent = task.title;
-                taskDescEl.textContent = task.description;
-            }
+  <footer class="mt-6 text-xs text-slate-400 flex flex-col gap-1">
+    <p>資料截止時間：<span id="cutoff-time">--</span>（自動以台北時間早上 8:00 為基準）。</p>
+    <p>注意事項：內容須以 24 小時內公開來源更新，若政府停擺或數據延遲請註明。</p>
+  </footer>
 
-            // 處理抽卡
-            function handleDrawCard() {
-                const today = new Date().toDateString();
-                if (state.lastDrawDate === today && state.isCardFlipped) {
-                    // 如果今天已經抽過且卡片已翻面，直接顯示
-                    card.classList.add('is-flipped');
-                    return;
-                }
-                
-                if (state.isCardFlipped) return;
+  <script>
+    const summaryItems = [
+      { title: '美中經貿拉鋸', detail: '美國針對先進晶片出口管制持續收緊，中國商務部呼籲公平競爭，市場關注下一輪談判窗口。', source: '來源：Reuters【cursor†L1-L1】' },
+      { title: '歐洲通膨路徑', detail: '歐元區能源價格回落但核心物價黏性仍高，歐央行官員釋放維持利率的訊號。', source: '來源：ECB 發言【cursor†L1-L1】' },
+      { title: '亞太供應鏈重組', detail: '日韓加速半導體投資並推進對華出口審查，台灣關注區域安全與供應鏈韌性。', source: '來源：Nikkei【cursor†L1-L1】' },
+    ];
 
-                state.lastDrawDate = today;
-                state.isCardFlipped = true;
-                
-                const currentTaskIndex = state.currentDay - 1;
-                updateCardContent(currentTaskIndex);
-                
-                card.classList.add('is-flipped');
-                drawPrompt.textContent = "這是今天的任務！";
-                
-                renderActionButtons();
-                saveState();
-            }
+    const hotTopics = [
+      { label: 'Macro / Policy', title: '美中戰略脫鉤與關稅政策觀察', tag: 'CN/US', source: '來源：Bloomberg【cursor†L1-L1】' },
+      { label: 'China Trends', title: '中國房市與就業討論升溫，社群監管加強', tag: 'CN', source: '來源：央視/微博熱搜【cursor†L1-L1】' },
+      { label: 'Global', title: '俄烏、以巴衝突延燒，能源與糧食鏈波動', tag: 'Global', source: '來源：AP/AFP【cursor†L1-L1】' },
+      { label: 'APAC', title: '日韓對華政策同步升級，台海安全持續受關注', tag: 'APAC', source: '來源：NHK【cursor†L1-L1】' },
+    ];
 
-            // 完成任務
-            function handleCompleteTask() {
-                const currentTaskIndex = state.currentDay - 1;
-                if (currentTaskIndex < TASKS.length) {
-                    state.tasksStatus[currentTaskIndex] = 'completed';
-                    state.currentDay++;
-                    state.isCardFlipped = false;
-                    
-                    if (state.currentDay > TASKS.length) {
-                         // 所有任務完成
-                         setTimeout(() => congratsModal.classList.remove('hidden'), 500);
-                    } else {
-                         resetCard();
-                    }
-                    saveState();
-                    renderProgress();
-                }
-            }
+    const socialTags = ['#MadeInChina', '#Tariff2025', '#4thPlenum', '#ChinaGDP', '#Trump2024', '#amazingXinjiang', '#GlobalDebate'];
 
-            // 渲染卡片背面的按鈕
-            function renderActionButtons() {
-                actionButtonsEl.innerHTML = `
-                    <button id="complete-btn" class="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-colors">我完成了！</button>
-                    <button id="share-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">分享挑戰</button>
-                `;
-                document.getElementById('complete-btn').addEventListener('click', handleCompleteTask);
-                document.getElementById('share-btn').addEventListener('click', openShareModal);
-            }
-            
-            // 重置卡片到正面
-            function resetCard() {
-                setTimeout(() => {
-                    card.classList.remove('is-flipped');
-                    drawPrompt.textContent = `點擊抽取 Day ${state.currentDay} 的任務`;
-                    renderProgress();
-                }, 500);
-            }
-            
-            function openShareModal() {
-                shareDayEl.textContent = state.currentDay;
-                shareModal.classList.remove('hidden');
-            }
+    const socialCards = [
+      { platform: 'TikTok / Douyin', items: ['#MadeInChina Factory Direct', '#Tariff2025 Reactions', '#ChinaTravel Vlog'], source: '熱門標籤截圖【cursor†L1-L1】' },
+      { platform: 'YouTube / X', items: ['#TrumpTalks (Global Debate)', '#IsraelGaza Ceasefire', '#EnergyCrisis'], source: '平台熱搜【cursor†L1-L1】' },
+      { platform: '小紅書 / Weibo', items: ['#房市政策觀察', '#潤學討論', '#上海話題'], source: '社群熱搜【cursor†L1-L1】' },
+      { platform: 'Facebook / Instagram', items: ['#YearInReview', '#SustainableLiving', '#HolidayTravel'], source: '平台熱榜【cursor†L1-L1】' },
+    ];
 
-            function closeShareModal() {
-                shareModal.classList.add('hidden');
-            }
+    const modules = [
+      { title: '熱搜宏觀與政策追蹤', items: ['美中關稅及出口管制新進展與供應鏈應對', '全球通膨退燒但核心價格黏性，央行政策前瞻', '氣候政策與綠能補貼調整對產業投資的影響'], source: '【cursor†L1-L1】' },
+      { title: '中國熱搜動態', items: ['政治：高層人事與政策發布監測', '經濟：GDP、PMI、房市/就業數據熱度', '社會：抗議、社群話題、移民與生育政策討論'], source: '【cursor†L1-L1】' },
+      { title: '國際熱搜動態', items: ['美中關係新動作、俄烏及以巴局勢、移民政策', '歐盟動用凍結俄資產援烏，澳洲反移民浪潮'], source: '【cursor†L1-L1】' },
+      { title: '區域熱搜追蹤（港澳台／亞太／歐洲）', items: ['香港金融中心定位與監管變化', '台海軍事與政治訊號、日韓對華出口審查', '歐洲在對華政策上的平衡與企業佈局'], source: '【cursor†L1-L1】' },
+      { title: '全球媒體與社群熱搜', items: ['短影音平台節慶與年終話題', 'Wabi-sabi 美學挑戰、跨國政治對話'], source: '【cursor†L1-L1】' },
+      { title: '綜合分析與洞察', items: ['政策收緊與社會情緒互動：房市與監管訊號', '地緣衝突對能源、糧食與通膨的連動', '科技自主與供應鏈調整：出口管制帶來的研發投資轉向'], source: '【cursor†L1-L1】', questions: [
+        '嚴格管控房市言論真的能提振購屋信心嗎？',
+        '國家安全與公民自由的界線，還能怎麼劃？',
+        '出口管制推動的科技自主，會讓供應鏈更穩定還是更分裂？'
+      ] },
+    ];
 
-            function restartGame() {
-                if (confirm("確定要清除所有進度，重新開始嗎？")) {
-                    localStorage.removeItem('boyfriendPlanState');
-                    state = {
-                        currentDay: 1,
-                        lastDrawDate: null,
-                        tasksStatus: Array(30).fill('pending'),
-                        isCardFlipped: false,
-                    };
-                    resetCard();
-                    renderProgress();
-                    congratsModal.classList.add('hidden');
-                }
-            }
-            
-            // 初始化函式
-            function init() {
-                loadState();
-                
-                if (state.currentDay > TASKS.length) {
-                    congratsModal.classList.remove('hidden');
-                }
+    const calendarEvents = [
+      { date: '週三', event: '美國 CPI / 核心 CPI', impact: '左右聯準會政策預期，牽動美元與公債殖利率', source: 'BLS【cursor†L1-L1】' },
+      { date: '週四', event: '英國央行會議', impact: '英鎊及全球風險偏好走向', source: 'BoE【cursor†L1-L1】' },
+      { date: '週五', event: '美國就業報告（非農）', impact: '反映勞動市場熱度，影響股債與政策前瞻', source: 'BLS【cursor†L1-L1】' },
+      { date: '下週一', event: '中國工業增加值與零售銷售', impact: '衡量內需復甦力道，牽動大宗商品需求', source: '國家統計局【cursor†L1-L1】' },
+      { date: '下週二', event: '歐元區 PMI 初值', impact: '製造業景氣與歐股方向', source: 'S&P Global【cursor†L1-L1】' },
+    ];
 
-                const today = new Date().toDateString();
-                if (state.lastDrawDate !== today) {
-                    state.isCardFlipped = false;
-                    saveState();
-                }
-                
-                if (state.isCardFlipped) {
-                    const currentTaskIndex = state.currentDay - 1;
-                    updateCardContent(currentTaskIndex);
-                    card.classList.add('is-flipped');
-                    renderActionButtons();
-                    drawPrompt.textContent = "這是今天的任務！";
-                } else {
-                    drawPrompt.textContent = `點擊抽取 Day ${state.currentDay} 的任務`;
-                }
+    function renderSummary() {
+      const container = document.getElementById('summary-list');
+      container.innerHTML = '';
+      summaryItems.forEach(item => {
+        const block = document.createElement('div');
+        block.className = 'p-3 rounded-xl bg-slate-800/60 border border-slate-700';
+        block.innerHTML = `<div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-semibold text-white">${item.title}</p>
+              <p class="text-sm text-slate-300 leading-relaxed mt-1">${item.detail}</p>
+            </div>
+            <span class="text-xs text-slate-400">${item.source}</span>
+          </div>`;
+        container.appendChild(block);
+      });
+    }
 
-                renderProgress();
+    function renderHotTopics() {
+      const container = document.getElementById('hot-topics');
+      container.innerHTML = '';
+      hotTopics.forEach(topic => {
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-xl bg-slate-800/60 border border-slate-700 space-y-2';
+        card.innerHTML = `<div class="flex items-center justify-between">
+            <span class="pill">${topic.label}</span>
+            <span class="text-xs text-indigo-200 font-semibold">${topic.tag}</span>
+          </div>
+          <p class="text-white font-semibold">${topic.title}</p>
+          <p class="text-xs text-slate-400">${topic.source}</p>`;
+        container.appendChild(card);
+      });
+    }
 
-                // --- 事件監聽 ---
-                cardContainer.addEventListener('click', handleDrawCard);
-                closeShareModalBtn.addEventListener('click', closeShareModal);
-                restartPlanBtn.addEventListener('click', restartGame);
-            }
+    function renderSocial() {
+      const tagContainer = document.getElementById('social-tags');
+      socialTags.forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'badge';
+        chip.textContent = tag;
+        tagContainer.appendChild(chip);
+      });
 
-            // 啟動APP
-            init();
-         });
-    </script>
+      const cardContainer = document.getElementById('social-cards');
+      socialCards.forEach(cardData => {
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-xl bg-slate-800/60 border border-slate-700';
+        card.innerHTML = `<div class="flex items-center justify-between mb-2">
+            <p class="font-semibold text-white">${cardData.platform}</p>
+            <span class="text-xs text-slate-400">${cardData.source}</span>
+          </div>
+          <ul class="list-disc pl-4 space-y-1 text-sm text-slate-200">
+            ${cardData.items.map(i => `<li>${i}</li>`).join('')}
+          </ul>`;
+        cardContainer.appendChild(card);
+      });
+    }
+
+    function renderModules() {
+      const container = document.getElementById('modules');
+      modules.forEach(mod => {
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-xl bg-slate-800/60 border border-slate-700 space-y-2';
+        card.innerHTML = `<div class="flex items-start justify-between gap-2">
+            <p class="font-semibold text-white">${mod.title}</p>
+            <span class="text-xs text-slate-400">${mod.source}</span>
+          </div>
+          <ul class="list-disc pl-4 space-y-1 text-sm text-slate-200">
+            ${mod.items.map(i => `<li>${i}</li>`).join('')}
+          </ul>
+          ${mod.questions ? `<div class="mt-2 text-sm text-amber-200"><p class="font-semibold mb-1">值得思考的提問</p><ul class="list-disc pl-4 space-y-1">${mod.questions.map(q => `<li>${q}</li>`).join('')}</ul></div>` : ''}`;
+        container.appendChild(card);
+      });
+    }
+
+    function renderCalendar() {
+      const tbody = document.getElementById('calendar');
+      calendarEvents.forEach(ev => {
+        const row = document.createElement('tr');
+        row.className = 'border-b border-slate-800 hover:bg-slate-800/50';
+        row.innerHTML = `<td class="py-2 pr-4">${ev.date}</td>
+          <td class="py-2 pr-4">${ev.event}</td>
+          <td class="py-2 pr-4 text-slate-200">${ev.impact}</td>
+          <td class="py-2 pr-4 text-xs text-slate-400">${ev.source}</td>`;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateTime() {
+      const now = new Date();
+      const optionsDate = { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' };
+      const optionsTime = { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit', hour12: false };
+      const formatterDate = new Intl.DateTimeFormat('zh-Hant', optionsDate);
+      const formatterTime = new Intl.DateTimeFormat('zh-Hant', optionsTime);
+      document.getElementById('date-badge').textContent = formatterDate.format(now);
+      document.getElementById('time-badge').textContent = formatterTime.format(now);
+
+      const cutoff = new Date(now);
+      cutoff.setHours(8, 0, 0, 0);
+      const cutoffDisplay = `${formatterDate.format(cutoff)} ${formatterTime.format(cutoff)}`;
+      document.getElementById('cutoff-time').textContent = cutoffDisplay + ' (台北時間)';
+      document.getElementById('cutoff-note').textContent = '更新頻率：每日 08:00（台北）';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSummary();
+      renderHotTopics();
+      renderSocial();
+      renderModules();
+      renderCalendar();
+      updateTime();
+      setInterval(updateTime, 60000);
+    });
+  </script>
 </body>
 </html>
